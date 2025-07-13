@@ -1,6 +1,18 @@
+/**
+ * @brief   Battleship Pathfinding Problem  
+ * @details This file contains the main function and top level functions for the pathfinding problem given by Globus Medical.
+ *          The code uses a modified implementation of A* algorithm for path finding where only vertical and horizontal steps 
+ *          are taken into account. The program takes in the json file path and the diemsions of the world as inputs. 
+ *          Usage: ./pathfinding <path_to_json> <h_max> <v_max>
+ * 
+ * @author  Deepak E Kapure
+ * @date    07-13-2025 
+ * 
+ */
 #include "definitions.hpp"
 #include "read_map.hpp"
 #include "pathfinding.hpp"
+
 
 int main(int argc, char *argv[]) {
     
@@ -19,7 +31,6 @@ int main(int argc, char *argv[]) {
     cout << "x_max: " << x_max << "\n";
     cout << "y_max: " << y_max << "\n";
 
-
     // Shared data structures
     Document doc;                           // JSON file object
     const Value* buff = NULL;               // pointer to store world map points
@@ -27,10 +38,10 @@ int main(int argc, char *argv[]) {
 
     if(read_file(&doc, map_file)) {
         cout << "File object created" << endl;
-        if(doc.HasMember("layers")) {                              // check if file has "layers" field
+        if(doc.HasMember("layers")) {                                  // check if file has "layers" field
             const auto& layers = doc["layers"];
             for (auto& layer : layers.GetArray()) {
-                if (string(layer["name"].GetString()) == "world") {   // go to "world" section
+                if (string(layer["name"].GetString()) == "world") {    // go to "world" section
                     buff = &layer["data"];                             // assign to buffer ptr
                     break;
                 }

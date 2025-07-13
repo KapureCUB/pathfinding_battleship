@@ -1,12 +1,34 @@
+/**
+ * @brief   Pathfinding file  
+ * @details This file contains the function for A* based pathfinding functions for the pathfinding problem given by Globus Medical.
+ *          The code uses a modified implementation of A* algorithm for path finding where only vertical and horizontal steps 
+ *          are taken into account.
+ * 
+ * @author  Deepak E Kapure
+ * @date    07-13-2025 
+ * 
+ */
 #include "pathfinding.hpp"
 #include "definitions.hpp"
 
+/**
+ * @brief States for the state machine on checking evry new node
+ * 
+ */
 enum STATES {
     NEW_NODE=0,
     CHECK_T_COST=1,
     CHECK_D_COST=2
 };
 
+/**
+ * @brief Function to check the nature of the new neighbour node
+ *        The State machine cycles through 3 states to determine
+ *        if the new node should be replaced by the current node
+ * @param c Address of current node pointer
+ * @param n Address of next node pointer 
+ * 
+ */
 void update_state_machine(_field **c, _field **n) {
     if(c && n) {
         _field *curr = *c;
@@ -40,6 +62,15 @@ void update_state_machine(_field **c, _field **n) {
     }
 }
 
+/**
+ * @brief Function to find the vaild path from start to target
+ *        It uses A* method on the precalculated costs for each nodes
+ *        and uses the state machine to iterate through the probable 
+ *        path
+ * @param bu pointer the the battleship class
+ * @return return 1 if a valid path is found. 0 if no path
+ * 
+ */
 int find_path(battleship *bu) {
     int ret = 0;
     vector<_field*> neighbours;
@@ -74,5 +105,8 @@ int find_path(battleship *bu) {
         ret = 1;                                                    // set the return variable to notify caller
     }
     
+    // clear before exit
+    neighbours.clear();
+
     return ret;
 }

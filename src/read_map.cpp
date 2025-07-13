@@ -1,10 +1,26 @@
+/**
+ * @brief   Read JSON map file  
+ * @details This file contains the functions to read the JSON file and store it to Document 
+ *          object for parsing. It also had printing and marking functions for handling the
+ *          Document object
+ * 
+ * @author  Deepak E Kapure
+ * @date    07-13-2025 
+ * 
+ */
 #include <fstream>
 #include "definitions.hpp"
 #include "read_map.hpp"
 
 /**
- * Refernces - https://www.geeksforgeeks.org/cpp/rapidjson-file-read-write-in-cpp/
- *             https://github.com/Tencent/rapidjson
+ * @brief Function to read JSON file passed in as agrument. It reads and 
+ *        stores the json formatted data to the doc object and closes the 
+ *        file. 
+ *        Refernces - https://www.geeksforgeeks.org/cpp/rapidjson-file-read-write-in-cpp/
+ *                    https://github.com/Tencent/rapidjson
+ * @param doc object pointer to store file info
+ * @param f_name string containing map file path
+ * @returns 1 if succeeded, 0 if failed 
  */
 int read_file(Document *doc, string f_name) {
     int ret=1;
@@ -17,6 +33,9 @@ int read_file(Document *doc, string f_name) {
 
     // Read the file into a string
     string json((istreambuf_iterator<char>(file)), istreambuf_iterator<char>());
+    
+    // close file
+    file.close();
 
     // Parse the JSON data
     doc->Parse(json.c_str());
@@ -28,6 +47,16 @@ int read_file(Document *doc, string f_name) {
     return ret;
 }
 
+/**
+ * @brief Function to mark and print the map on the console. It reads and the 
+ *        json formatted data, marks the start and target positions and prints
+ *        the map on the console 
+ *
+ * @param buff pointer to buffer containing map data
+ * @param start pointer to start position
+ * @param target pointer to target position
+ * @param y_max maximum size of a row in the map 
+ */
 void print_map_and_mark(const Value *buff, _field *start, _field *target, int y_max) {
     if(buff) {
         cout << "Reading map.." << endl;

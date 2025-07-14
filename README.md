@@ -43,7 +43,7 @@ Core A\* logic using cost estimates and a state machine to trace from start to t
 
 Reads and parses the input `.json` map file into a RapidJSON `Document`.
 
-### `void print_map_and_mark(...)`
+### `void print_map_and_mark()`
 
 Prints the raw map and marks the `start` and `target` fields based on values.
 

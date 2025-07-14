@@ -65,7 +65,6 @@ int main(int argc, char *argv[]) {
         cout << "Running path finding.." << endl;
         if(find_path(&bu1, &solution_list)) {
             cout << "Found a path! Points are: " << endl;
-            cout << "(" << (bu1.get_start()->x_pos) << "," << (bu1.get_start()->y_pos) << "), " ;
             for(auto point: solution_list) {
                 cout << "(" << point->x << "," << point->y << "), " ;
             }

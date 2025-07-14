@@ -10,6 +10,7 @@
  */
 #include "pathfinding.hpp"
 #include "definitions.hpp"
+#include <stack>
 
 /**
  * @brief States for the state machine on checking evry new node
@@ -74,46 +75,68 @@ void update_state_machine(_field **c, _field **n) {
 int find_path(battleship *bu, vector<_points*> *sol) {
     int ret = 0;
     vector<_field*> neighbours;
-    _field *next_node = bu->get_start();
-    _field *prev_node = NULL, *curr_node=NULL;
+    stack<_field*> backtrack;
+    _field *start = bu->get_start();
+    _field *target = bu->get_target();
 
-    // loop till destination not found
-    while((next_node != bu->get_target()) && (next_node != NULL)) {
-        curr_node = next_node;                                      // reset locals
-        neighbours.clear();                                         
-        bu->get_valid_neighbours(&neighbours, next_node);           // get neighbourhood nodes
-        for(_field *ptr: neighbours) {
-            if((curr_node == next_node) && (ptr != prev_node)) {    // read one entry from valid neighbours to start comparisons
-                curr_node = ptr;
-            } else if(ptr != prev_node) {
-                update_state_machine(&curr_node, &ptr);             // run thorugh state machine to check priority sequence
+    _field *curr_node = start;                                  // start with current node 
+    curr_node->visited = bu->get_bu_num();
+    curr_node->marked_path = true;
+    backtrack.push(curr_node);                                  // push it to back tracking stack
+
+    while (!backtrack.empty()) {                                // iterate over the stack 
+        curr_node = backtrack.top();                            
+        if (curr_node == target) {                              // target is reached, exit
+            ret = 1;
+            break;
+        }
+        neighbours.clear();
+        bu->get_valid_neighbours(&neighbours, curr_node);       // get neighbourhood nodes
+
+        _field *next_node = NULL;
+        for (_field *ptr : neighbours) {
+            if (ptr->visited == NOT_VISITED) {                  // look for new nodes
+                if(!next_node) {                                // read one entry from valid neighbours to start comparisons
+                    next_node = ptr;
+                } else { 
+                    update_state_machine(&next_node, &ptr);     // look for valid neighbouring nodes
+                }
             }
-        }   
-        if(curr_node == next_node) {                                // we hit dead end
-            curr_node->visited = DEAD_END;
-            next_node = prev_node;                                  // go back to previous node
-            prev_node = NULL;
-        } else {
-            (curr_node->marked_path)=1;                             // toggle marked state
-            curr_node->visited = bu->get_bu_num();     
-            
-            // create point for sol list
-            _points *p = new _points;
-            p->x = curr_node->x_pos; p->y = curr_node->y_pos;
-            sol->push_back(p); 
+        }
 
-            prev_node = next_node;                                  // update prev_node
-            next_node = curr_node;                                  // update next_node
+        if(next_node) {                                         // found a new node, mark it
+            next_node->visited = bu->get_bu_num();
+            next_node->marked_path = true;
+            backtrack.push(next_node);
+
+            // Save path point
+            _points *p = new _points;
+            p->x = next_node->x_pos; 
+            p->y = next_node->y_pos;
+            sol->push_back(p);
+        } else {                                                // no new valid node, backtrack
+            curr_node->marked_path = false;
+            curr_node->visited = DEAD_END;
+            backtrack.pop();
+
+            // Remove last added point from solution
+            if (!sol->empty()) {
+                delete sol->back();
+                sol->pop_back();
+            }
         }
     }
 
-    if(next_node == bu->get_target()) {
-        ret = 1;                                                    // set the return variable to notify caller
+    if (ret) {
+        target->marked_path = true;                             // mark target for solution entry
+
+        _points *start_p = new _points;                         // put start in solution list
+        start_p->x = start->x_pos;
+        start_p->y = start->y_pos;
+        sol->insert(sol->begin(), start_p);
     }
-    
-    // clear before exit
-    neighbours.clear();
 
     return ret;
+
 }
 

@@ -83,7 +83,7 @@ void print_map_and_mark(const Value *buff, _field *start, _field *target, int y_
                 target->marked_path = 0;
                 cout << "*" << " ";
             }
-            if ((i + 1) % 32 == 0) cout << "\n";
+            if ((i + 1) % y_max == 0) cout << "\n";
         }
         cout << "Start at (" << start->x_pos << "," << start->y_pos << ")" << endl;
         cout << "Target at (" << target->x_pos << "," << target->y_pos << ")" << endl;

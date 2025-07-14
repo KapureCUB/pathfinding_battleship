@@ -60,14 +60,26 @@ int main(int argc, char *argv[]) {
             return -1;
         }
         // Insert to array
+        vector<_points *> solution_list;
         bu1.insert_nodes(buff);
         cout << "Running path finding.." << endl;
-        if(find_path(&bu1)) {
-            cout << "Found a path!" << endl;
+        if(find_path(&bu1, &solution_list)) {
+            cout << "Found a path! Points are: " << endl;
+            cout << "(" << (bu1.get_start()->x_pos) << "," << (bu1.get_start()->y_pos) << "), " ;
+            for(auto point: solution_list) {
+                cout << "(" << point->x << "," << point->y << "), " ;
+            }
+            cout << endl;
             bu1.print_path();
         } else {
             cout << "No valid path found!" << endl;
         }
+        
+        // clear solution list
+        for(auto point: solution_list) {
+            delete point;
+        }
+        solution_list.clear();
     }
 
     return 0;

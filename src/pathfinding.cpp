@@ -71,7 +71,7 @@ void update_state_machine(_field **c, _field **n) {
  * @return return 1 if a valid path is found. 0 if no path
  * 
  */
-int find_path(battleship *bu) {
+int find_path(battleship *bu, vector<_points*> *sol) {
     int ret = 0;
     vector<_field*> neighbours;
     _field *next_node = bu->get_start();
@@ -96,6 +96,12 @@ int find_path(battleship *bu) {
         } else {
             (curr_node->marked_path)=1;                             // toggle marked state
             curr_node->visited = bu->get_bu_num();     
+            
+            // create point for sol list
+            _points *p = new _points;
+            p->x = curr_node->x_pos; p->y = curr_node->y_pos;
+            sol->push_back(p); 
+
             prev_node = next_node;                                  // update prev_node
             next_node = curr_node;                                  // update next_node
         }
@@ -110,3 +116,4 @@ int find_path(battleship *bu) {
 
     return ret;
 }
+
